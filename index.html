@@ -45,16 +45,14 @@
 
 
 <script>
+ chessboard = [
+    ["♜", "♞", "♝", "♛", "♚", "♝", "♞", "♜"],
+    ["♟", "♟", "♟", "♟", "♟", "♟", "♟", "♟"],
+    //rest of the rows
+    ];
 
     function drawChessboard() {
         //Initialize all the cells with empty values 
-        for (var i = 0; i < 8; i++) {
-            for (var j = 0; j < 8; j++) {
-                if(chessboard[i][j] == undefined) {
-                chessboard[i][j] = "";
-                }
-            }
-        }  
 
         var table = document.createElement("table");
         table.id = "chessboard";
@@ -113,22 +111,21 @@ function isValidMove(piece, x1, y1, x2, y2) {
     return true;
 }
 document.addEventListener("DOMContentLoaded", function() {
-        var chessboard = [
-        ["♜", "♞", "♝", "♛", "♚", "♝", "♞", "♜"],
-        ["♟", "♟", "♟", "♟", "♟", "♟", "♟", "♟"],
-        //rest of the rows
-        ];
+
     
-    drawChessboard();
+   
     //create variables
     var selectedPiece = null;
     var selectedPieceColor = null;
     var selectedPieceX = null;
     var selectedPieceY = null;
     var table = document.getElementById("chessboard");
-    });
-    var table = document.getElementById("chessboard");
-    table.addEventListener("click", function(event) {
+    isValidMove();
+    drawChessboard();
+});
+ 
+    document.getElementById("chessboard").addEventListener("click", function(event) {
+        isValidMove();
     var cell = event.target;
     var x = cell.parentNode.rowIndex;
     var y = cell.cellIndex;
