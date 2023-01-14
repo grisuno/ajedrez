@@ -55,7 +55,7 @@
         //Initialize all the cells with empty values 
 
         var table = document.createElement("table");
-        table.id = "chessboard";
+
         for (var i = 0; i < 8; i++) {
             var row = document.createElement("tr");
             for (var j = 0; j < 8; j++) {
@@ -69,6 +69,17 @@
     }
   
 
+function colorizeChessboard() {
+    var table = document.getElementById("chessboard");
+    var cells = table.getElementsByTagName("td");
+    for (var i = 0; i < cells.length; i++) {
+        if ((i % 2 === 0 && i / 8 % 2 === 0) || (i % 2 !== 0 && i / 8 % 2 !== 0)) {
+            cells[i].classList.add("white");
+        } else {
+            cells[i].classList.add("black");
+        }
+    }
+}
 
  
 function isValidMove(piece, x1, y1, x2, y2) {
@@ -121,6 +132,7 @@ document.addEventListener("DOMContentLoaded", function() {
     var selectedPieceY = null;
     var table = document.getElementById("chessboard");
     isValidMove();
+    colorizeChessboard();
     drawChessboard();
 });
  
