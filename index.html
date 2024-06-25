@@ -1,182 +1,129 @@
-<style>
-  #chessboard {
-  border-collapse: collapse;
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chess Game</title>
+  <style>
+    #chessboard {
+      border-collapse: collapse;
+    }
 
-#chessboard td {
-  width: 50px;
-  height: 50px;
-}
+    #chessboard td {
+      width: 50px;
+      height: 50px;
+      text-align: center;
+      vertical-align: middle;
+      font-size: 24px;
+    }
 
-.black {
-  background-color: #000000;
-}
+    .black {
+      background-color: #000000;
+      color: white;
+    }
 
-.white {
-  background-color: #ffffff;
-}
+    .white {
+      background-color: #ffffff;
+      color: black;
+    }
 
-</style>
-<table id="chessboard">
-  <tbody>
-    <tr>
-      <td class="black"></td>
-      <td class="white"></td>
-      <td class="black"></td>
-      <td class="white"></td>
-      <td class="black"></td>
-      <td class="white"></td>
-      <td class="black"></td>
-      <td class="white"></td>
-    </tr>
-    <tr>
-      <td class="white"></td>
-      <td class="black"></td>
-      <td class="white"></td>
-      <td class="black"></td>
-      <td class="white"></td>
-      <td class="black"></td>
-      <td class="white"></td>
-      <td class="black"></td>
-    </tr>
-    <!-- rest of the rows -->
-  </tbody>
-</table>
+    .selected {
+      background-color: gray !important;
+    }
+  </style>
+</head>
+<body>
+  <table id="chessboard"></table>
 
-
-<script>
- chessboard = [
-    ["♜", "♞", "♝", "♛", "♚", "♝", "♞", "♜"],
-    ["♟", "♟", "♟", "♟", "♟", "♟", "♟", "♟"],
-    //rest of the rows
+  <script>
+    var chessboard = [
+      ["♜", "♞", "♝", "♛", "♚", "♝", "♞", "♜"],
+      ["♟", "♟", "♟", "♟", "♟", "♟", "♟", "♟"],
+      [null, null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null, null],
+      [null, null, null, null, null, null, null, null],
+      ["♙", "♙", "♙", "♙", "♙", "♙", "♙", "♙"],
+      ["♖", "♘", "♗", "♕", "♔", "♗", "♘", "♖"]
     ];
 
     function drawChessboard() {
-        //Initialize all the cells with empty values 
-
-        var table = document.createElement("table");
-
-        for (var i = 0; i < 8; i++) {
-            var row = document.createElement("tr");
-            for (var j = 0; j < 8; j++) {
-                var cell = document.createElement("td");
-                cell.innerHTML = chessboard[i][j];
-                row.appendChild(cell);
-            }
-            table.appendChild(row);
+      var table = document.getElementById("chessboard");
+      table.innerHTML = ""; // Clear previous board
+      for (var i = 0; i < 8; i++) {
+        var row = document.createElement("tr");
+        for (var j = 0; j < 8; j++) {
+          var cell = document.createElement("td");
+          cell.classList.add((i + j) % 2 === 0 ? "white" : "black");
+          cell.innerHTML = chessboard[i][j] ? chessboard[i][j] : "";
+          row.appendChild(cell);
         }
-        document.body.appendChild(table);
+        table.appendChild(row);
+      }
     }
-  
 
-function colorizeChessboard() {
-    var table = document.getElementById("chessboard");
-    var cells = table.getElementsByTagName("td");
-    for (var i = 0; i < cells.length; i++) {
-        if ((i % 2 === 0 && i / 8 % 2 === 0) || (i % 2 !== 0 && i / 8 % 2 !== 0)) {
-            cells[i].classList.add("white");
-        } else {
-            cells[i].classList.add("black");
-        }
-    }
-}
-
- 
-function isValidMove(piece, x1, y1, x2, y2) {
-    // logic for checking valid move for each piece
-    // for example, a rook can only move horizontally or vertically
-    switch(piece){
-        case '♜':
-            if(x1 !== x2 && y1 !== y2){
-                return false;
-            }
-            break;
-        case '♞':
-            if(Math.abs(x1-x2) !== 2 || Math.abs(y1-y2) !== 1){
-                return false;
-            }
-            break;
-        case '♝':
-            if(Math.abs(x1-x2) !== Math.abs(y1-y2)){
-                return false;
-            }
-            break;
-        case '♛':
-            if(Math.abs(x1-x2) !== Math.abs(y1-y2) && (x1 !== x2 && y1 !== y2)){
-                return false;
-            }
-            break;
-        case '♚':
-            if(Math.abs(x1-x2) > 1 || Math.abs(y1-y2) > 1) {
-                return false;
-            }
-            break;
-        case '♟':
-            if(x1-x2 !== 1 && y1 !== y2) {
-                return false;
-            }
-            break;
+    function isValidMove(piece, x1, y1, x2, y2) {
+      // logic for checking valid move for each piece
+      switch(piece) {
+        case '♜': // rook
+        case '♖':
+          return x1 === x2 || y1 === y2;
+        case '♞': // knight
+        case '♘':
+          return Math.abs(x1 - x2) === 2 && Math.abs(y1 - y2) === 1 || Math.abs(x1 - x2) === 1 && Math.abs(y1 - y2) === 2;
+        case '♝': // bishop
+        case '♗':
+          return Math.abs(x1 - x2) === Math.abs(y1 - y2);
+        case '♛': // queen
+        case '♕':
+          return Math.abs(x1 - x2) === Math.abs(y1 - y2) || x1 === x2 || y1 === y2;
+        case '♚': // king
+        case '♔':
+          return Math.abs(x1 - x2) <= 1 && Math.abs(y1 - y2) <= 1;
+        case '♟': // black pawn
+          return x1 - x2 === 1 && y1 === y2;
+        case '♙': // white pawn
+          return x2 - x1 === 1 && y1 === y2;
         default:
-            return false;
+          return false;
+      }
     }
-    return true;
-}
-document.addEventListener("DOMContentLoaded", function() {
 
-    
-   
-    //create variables
-    var selectedPiece = null;
-    var selectedPieceColor = null;
-    var selectedPieceX = null;
-    var selectedPieceY = null;
-    var table = document.getElementById("chessboard");
-    isValidMove();
-    colorizeChessboard();
-    drawChessboard();
-});
- 
-    document.getElementById("chessboard").addEventListener("click", function(event) {
-        isValidMove();
-    var cell = event.target;
-    var x = cell.parentNode.rowIndex;
-    var y = cell.cellIndex;
-    if (!selectedPiece) {
-        selectedPiece = chessboard[x][y];
-        selectedPieceX = x;
-        selectedPieceY = y;
-        cell.style.backgroundColor = "gray";
-    } else {
-        var piece = chessboard[x][y];
-        // check if the move is valid for the selected piece
-        if (isValidMove(selectedPiece, selectedPieceX, selectedPieceY, x, y)) {
-            // check if there's a piece at the target location
-            if (piece) {
-                // eat the piece
-                if(piece === '♚' && selectedPiece === '♔'){
-                  alert("Jaque Mate!");
-                }
-                else if(piece === '♚'){
-                  alert("Jaque!");
-                }
-                chessboard[x][y] = selectedPiece;
-            } else {
-                chessboard[x][y] = selectedPiece;
-            }
+    document.addEventListener("DOMContentLoaded", function() {
+      var selectedPiece = null;
+      var selectedPieceX = null;
+      var selectedPieceY = null;
+
+      drawChessboard();
+
+      document.getElementById("chessboard").addEventListener("click", function(event) {
+        var cell = event.target;
+        if (cell.tagName !== "TD") return;
+
+        var x = cell.parentNode.rowIndex;
+        var y = cell.cellIndex;
+
+        if (selectedPiece === null) {
+          // select piece
+          if (chessboard[x][y]) {
+            selectedPiece = chessboard[x][y];
+            selectedPieceX = x;
+            selectedPieceY = y;
+            cell.classList.add("selected");
+          }
+        } else {
+          // move piece
+          if (isValidMove(selectedPiece, selectedPieceX, selectedPieceY, x, y)) {
+            chessboard[x][y] = selectedPiece;
             chessboard[selectedPieceX][selectedPieceY] = null;
             drawChessboard();
-            selectedPiece = null;
-            selectedPieceX = null;
-            selectedPieceY = null;
-        } else {
-            // invalid move
-            selectedPiece = null;
-            selectedPieceX = null;
-            selectedPieceY = null;
-            drawChessboard();
+          }
+          selectedPiece = null;
+          selectedPieceX = null;
+          selectedPieceY = null;
         }
-    }
-});
- //create event listener
-
-</script>
+      });
+    });
+  </script>
+</body>
+</html>
